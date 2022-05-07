@@ -7,6 +7,13 @@ os.system("")
 deleted = 0
 
 
+def clear_console():
+    command = "clear"
+    if os.name in ('nt', 'dos'):
+        command = 'cls'
+    os.system(command)
+
+
 class style():
     BLACK = '\033[30m'
     RED = '\033[31m'
@@ -19,6 +26,7 @@ class style():
     UNDERLINE = '\033[4m'
     RESET = '\033[0m'
 
+
 def is_admin():
     try:
         return ctypes.windll.shell32.IsUserAnAdmin()
@@ -28,7 +36,7 @@ def is_admin():
 
 if is_admin():
 
-    def run2():
+    def find_empty_directories(dir):
         dirtmp = []
         to_remove = []
         files_msg = ""
@@ -66,10 +74,10 @@ if is_admin():
                 return 1
             else:
                 print("\n" + style.RED + "Canceled." + style.RESET)
-                return 1
+                return -1
 
 
-    def run(dir):
+    def find_duplicates(dir):
 
         dirtmp = []
         hashes = []
@@ -127,10 +135,6 @@ if is_admin():
                             files_msg += "\n" + style.UNDERLINE + f"{filename}" + style.RESET + f"{style.YELLOW} - [File]{style.RESET}"
                             to_remove.append(os.path.join(dir, filename))
 
-        if len(to_remove) == 0:
-            run2()
-            return
-
         if len(to_remove) != 0:
             print(files_msg)
             cmd = input(f"\nDelete displayed data? type: [{style.GREEN}y{style.RESET}/{style.RED}n{style.RESET}] ")
@@ -140,25 +144,44 @@ if is_admin():
                         os.remove(file)
                     except PermissionError:
                         shutil.rmtree(file)
+                clear_console()
                 print(f"\n{style.GREEN}Deleting\cleaning is finished!{style.RESET}")
                 return 1
 
             else:
+                clear_console()
                 print("\n" + style.RED + "Canceled." + style.RESET)
                 return 1
 
-        run2()
-
-
+    print("""
+    
+░█████╗░░█████╗░██████╗░██╗░░░██╗  ░█████╗░██╗░░░░░███████╗░█████╗░███╗░░██╗███████╗██████╗░
+██╔══██╗██╔══██╗██╔══██╗╚██╗░██╔╝  ██╔══██╗██║░░░░░██╔════╝██╔══██╗████╗░██║██╔════╝██╔══██╗
+██║░░╚═╝██║░░██║██████╔╝░╚████╔╝░  ██║░░╚═╝██║░░░░░█████╗░░███████║██╔██╗██║█████╗░░██████╔╝
+██║░░██╗██║░░██║██╔═══╝░░░╚██╔╝░░  ██║░░██╗██║░░░░░██╔══╝░░██╔══██║██║╚████║██╔══╝░░██╔══██╗
+╚█████╔╝╚█████╔╝██║░░░░░░░░██║░░░  ╚█████╔╝███████╗███████╗██║░░██║██║░╚███║███████╗██║░░██║
+░╚════╝░░╚════╝░╚═╝░░░░░░░░╚═╝░░░  ░╚════╝░╚══════╝╚══════╝╚═╝░░╚═╝╚═╝░░╚══╝╚══════╝╚═╝░░╚═╝
+""")
     while True:
         try:
             dir = input("\npath> ")
-            if run(dir) is None:
-                print("\n" + style.RED + "No duplicate files found!" + style.RESET)
-                continue
-            run(dir)
+            if dir != "":
+                clear_console()
+                print(style.MAGENTA + "\nScanning provided directory for duplicate files..." + style.RESET)
+                duplicates = find_duplicates(dir)
+                if duplicates is None:
+                    print("\n" + style.RED + "No duplicate files found!" + style.RESET)
+
+                print(style.MAGENTA + "\nScanning provided directory for empty directories..." + style.RESET)
+                empty = find_empty_directories(dir)
+                if empty is None:
+                    print("\n" + style.RED + "No empty directories found!" + style.RESET)
+            else:
+                clear_console()
+
         except FileNotFoundError:
-             print("\n" + style.RED + "The specified directory does not exist!" + style.RESET)
+            clear_console()
+            print("\n" + style.RED + "The specified directory does not exist!" + style.RESET)
 else:
     # Re-run the program with admin rights
     ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
