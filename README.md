@@ -6,3 +6,4 @@ Program scans all files in the specified directory and creates a hash from each 
 
 ### TODO:
 - [ ] Rewrite program using rich library just for better look
+- [ ] Make app look good (curses library)
