@@ -5,5 +5,4 @@ Simple duplicate file cleaner.
 Program scans all files in the specified directory and creates a hash from each file and then checks whether any of the generated hashes have repeated, if so, it means that the file is duplicate and it needs to be deleted.
 
 ### TODO:
-- [ ] Rewrite program using rich library just for better look
-- [ ] Make app look good (curses library)
+- [ ] Rewrite program using curses library just for better look and better mechanics
